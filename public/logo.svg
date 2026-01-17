@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80" width="300" height="80">
+  <!-- Icon: Stylized Box/Warehouse -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect x="10" y="15" width="50" height="50" rx="4" fill="url(#grad1)" />
+  <path d="M10 25 L35 15 L60 25" stroke="white" stroke-width="2" fill="none" opacity="0.5" />
+  <path d="M35 15 V65" stroke="white" stroke-width="2" fill="none" opacity="0.3" />
+  <path d="M22 35 L48 35 L52 28 L26 28 Z" fill="white" opacity="0.9" />
+  
+  <!-- Text: Goal-WMS -->
+  <text x="75" y="52" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="bold" font-size="32" fill="#0f172a">
+    Goal<tspan fill="#2563eb">-</tspan>WMS
+  </text>
+</svg>
