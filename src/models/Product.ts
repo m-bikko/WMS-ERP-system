@@ -6,8 +6,8 @@ export interface IBarcode {
 }
 
 export interface IProduct extends Document {
-    warehouse: mongoose.Types.ObjectId;
     category: mongoose.Types.ObjectId;
+    owner: mongoose.Types.ObjectId;
     name: string;
     photos: string[]; // URLs
     description?: string;
@@ -19,9 +19,7 @@ export interface IProduct extends Document {
     isDiscountActive: boolean;
     characteristics: Record<string, string>;
     country: string;
-    quantity: number;
     unit: string;
-    minQuantity: number;
     barcodes: IBarcode[];
     createdAt: Date;
     updatedAt: Date;
@@ -29,8 +27,8 @@ export interface IProduct extends Document {
 
 const ProductSchema: Schema = new Schema(
     {
-        warehouse: { type: Schema.Types.ObjectId, ref: 'Warehouse', required: true },
         category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+        owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         name: { type: String, required: true },
         photos: {
             type: [String],
@@ -45,9 +43,7 @@ const ProductSchema: Schema = new Schema(
         isDiscountActive: { type: Boolean, default: false },
         characteristics: { type: Map, of: String },
         country: { type: String, required: true },
-        quantity: { type: Number, required: true, default: 0 },
         unit: { type: String, required: true },
-        minQuantity: { type: Number, default: 0 },
         barcodes: [
             {
                 type: {

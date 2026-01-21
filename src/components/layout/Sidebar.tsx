@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Package, Warehouse } from 'lucide-react';
+import { Package, Warehouse, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar({ className, role }: { className?: string, role?: string }) {
     const pathname = usePathname();
 
     const links = [
@@ -21,6 +21,14 @@ export function Sidebar({ className }: { className?: string }) {
             icon: Warehouse,
         },
     ];
+
+    if (role === 'admin') {
+        links.push({
+            name: 'Users',
+            href: '/users',
+            icon: Users,
+        });
+    }
 
     return (
         <div className={cn("pb-12 min-h-screen border-r bg-muted/40", className)}>

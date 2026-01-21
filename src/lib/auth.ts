@@ -1,54 +1,56 @@
-import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import connectDB from './db';
+import User from '@/models/User';
+import bcrypt from 'bcryptjs';
+import { encrypt, getSession } from './session';
 
-const SECRET_KEY = process.env.SESSION_SECRET || 'default-secret-key-change-me';
-const key = new TextEncoder().encode(SECRET_KEY);
-
-export async function encrypt(payload: any) {
-    return await new SignJWT(payload)
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime('24h')
-        .sign(key);
-}
-
-export async function decrypt(input: string): Promise<any> {
-    try {
-        const { payload } = await jwtVerify(input, key, {
-            algorithms: ['HS256'],
-        });
-        return payload;
-    } catch {
-        return null; // Invalid token
-    }
-}
-
+export { logout, getSession } from './session';
 
 export async function login(formData: FormData) {
-    const login = formData.get('login');
-    const password = formData.get('password');
+    const login = formData.get('login') as string;
+    const password = formData.get('password') as string;
 
+    await connectDB();
+
+    // 1. Check for Admin via Environment Variables (Fallback/Super Admin)
     if (
         login === process.env.ADMIN_LOGIN &&
         password === process.env.ADMIN_PASSWORD
     ) {
-        // Create session
-        const session = await encrypt({ user: 'admin', expires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
-
-        // Save the session in a cookie
+        const session = await encrypt({ user: 'admin', role: 'admin', userId: '000000000000000000000000', expires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
         (await cookies()).set('wms_session', session, { expires: new Date(Date.now() + 24 * 60 * 60 * 1000), httpOnly: true });
         return true;
     }
+
+    // 2. Check Database for Users (Clients & Created Admins)
+    const user = await User.findOne({ username: login });
+    if (user && await bcrypt.compare(password, user.password)) {
+        const session = await encrypt({
+            user: user.username,
+            role: user.role,
+            userId: user._id.toString(),
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+        });
+        (await cookies()).set('wms_session', session, { expires: new Date(Date.now() + 24 * 60 * 60 * 1000), httpOnly: true });
+        return true;
+    }
+
     return false;
 }
 
-export async function logout() {
-    (await cookies()).set('wms_session', '', { expires: new Date(0) });
-}
-
-export async function getSession() {
-    const session = (await cookies()).get('wms_session')?.value;
+export async function getCurrentUser() {
+    const session = await getSession();
     if (!session) return null;
-    return await decrypt(session);
+
+    let userId = session.userId;
+    // Fix for legacy session with invalid ObjectId
+    if (userId === 'super-admin') {
+        userId = '000000000000000000000000';
+    }
+
+    return {
+        id: userId,
+        username: session.user,
+        role: session.role
+    };
 }

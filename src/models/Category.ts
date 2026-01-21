@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface ICategory extends Document {
     name: string;
     parent?: mongoose.Types.ObjectId; // null if root
+    owner: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -11,6 +12,7 @@ const CategorySchema: Schema = new Schema(
     {
         name: { type: String, required: true },
         parent: { type: Schema.Types.ObjectId, ref: 'Category', default: null },
+        owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     },
     { timestamps: true }
 );

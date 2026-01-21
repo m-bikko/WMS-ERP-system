@@ -22,8 +22,6 @@ async function getProductById(id: string) {
         article: p.article,
         code: p.code,
         externalCode: p.externalCode,
-        quantity: p.quantity,
-        minQuantity: p.minQuantity,
         unit: p.unit,
         price: p.price,
         photos: p.photos || [],
@@ -33,7 +31,6 @@ async function getProductById(id: string) {
             type: b.type,
             value: b.value
         })) : [],
-        warehouse: (p.warehouse as any)?.toString(),
         category: (p.category as any)?.toString(),
         country: p.country,
         isDiscountActive: p.isDiscountActive,

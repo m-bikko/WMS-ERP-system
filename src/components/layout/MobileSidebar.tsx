@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Package, Warehouse, Menu } from 'lucide-react';
+import { Package, Warehouse, Menu, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { useState } from 'react';
@@ -11,9 +11,10 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'; // Ensure acce
 
 interface MobileSidebarProps {
     onLogout: () => Promise<void>;
+    role?: string;
 }
 
-export function MobileSidebar({ onLogout }: MobileSidebarProps) {
+export function MobileSidebar({ onLogout, role }: MobileSidebarProps) {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
 
@@ -29,6 +30,14 @@ export function MobileSidebar({ onLogout }: MobileSidebarProps) {
             icon: Warehouse,
         },
     ];
+
+    if (role === 'admin') {
+        links.push({
+            name: 'Users',
+            href: '/users',
+            icon: Users,
+        });
+    }
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>

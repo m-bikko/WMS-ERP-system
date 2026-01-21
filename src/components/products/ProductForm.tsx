@@ -77,19 +77,22 @@ export function ProductForm({ categories, warehouses, defaultCategoryId, initial
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Core Info */}
                 <div className="space-y-4">
-                    <div className="grid gap-2">
-                        <Label>Warehouse</Label>
-                        <Select name="warehouse" defaultValue={initialData?.warehouse?._id || initialData?.warehouse} required >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Warehouse" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {warehouses.map((w) => (
-                                    <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    {!initialData && (
+                        <div className="grid gap-2">
+                            <Label>Warehouse (Initial Stock)</Label>
+                            <Select name="warehouse" defaultValue={initialData?.warehouse?._id || initialData?.warehouse} required >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Warehouse" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">None (Catalog Only)</SelectItem>
+                                    {warehouses.map((w) => (
+                                        <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     <div className="grid gap-2">
                         <Label>Category</Label>
@@ -158,16 +161,18 @@ export function ProductForm({ categories, warehouses, defaultCategoryId, initial
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label>Quantity</Label>
-                            <Input name="quantity" type="number" defaultValue={initialData?.quantity ?? 0} />
+                    {!initialData && (
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label>Initial Quantity</Label>
+                                <Input name="quantity" type="number" defaultValue={0} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>Min Quantity</Label>
+                                <Input name="minQuantity" type="number" defaultValue={0} />
+                            </div>
                         </div>
-                        <div className="grid gap-2">
-                            <Label>Min Quantity</Label>
-                            <Input name="minQuantity" type="number" defaultValue={initialData?.minQuantity ?? 0} />
-                        </div>
-                    </div>
+                    )}
                     <div className="grid gap-2">
                         <Label>Unit</Label>
                         <Select name="unit" defaultValue={initialData?.unit ?? "pcs"}>
